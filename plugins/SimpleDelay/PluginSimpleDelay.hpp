@@ -19,6 +19,12 @@
 #define PLUGIN_SIMPLEDELAY_H
 
 #include "DistrhoPlugin.hpp"
+#include "CParamSmooth.hpp"
+
+// times in ms
+#define MAX_DELAY_TIME 5000
+#define PARAM_SMOOTH_TIME 1000
+typedef float AmpVal;
 
 START_NAMESPACE_DISTRHO
 
@@ -27,11 +33,15 @@ START_NAMESPACE_DISTRHO
 class PluginSimpleDelay : public Plugin {
 public:
     enum Parameters {
-        paramVolume = 0,
+        paramDelay = 0,
+        paramFeedback,
+        paramMix,
         paramCount
     };
 
     PluginSimpleDelay();
+
+    ~PluginSimpleDelay();
 
 protected:
     // -------------------------------------------------------------------
@@ -67,7 +77,7 @@ protected:
     //
     // Get a proper plugin UID and fill it in here!
     int64_t getUniqueId() const noexcept override {
-        return d_cconst('a', 'b', 'c', 'd');
+        return d_cconst('d', 'l', 'a', 'y');
     }
 
     // -------------------------------------------------------------------
@@ -87,19 +97,25 @@ protected:
     // Optional
 
     // Optional callback to inform the plugin about a sample rate change.
-    void sampleRateChanged(double newSampleRate) override;
+    //void sampleRateChanged(double newSampleRate) override;
 
     // -------------------------------------------------------------------
     // Process
 
     void activate() override;
+    void deactivate() override;
     void run(const float**, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------
 
 private:
+    void allocateBuffer(double sampleRate);
+
     float    fParams[paramCount];
-    double   fSampleRate;
+    AmpVal*  buffer = nullptr;
+    uint32_t buflen = 0, writepos = 0;
+    float    delaylen, drywetmix, feedback;
+    CParamSmooth *smooth_delay;
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginSimpleDelay)
 };

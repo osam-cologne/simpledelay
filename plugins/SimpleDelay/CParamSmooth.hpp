@@ -15,12 +15,16 @@
 class CParamSmooth {
 public:
     CParamSmooth(float smoothingTimeMs, double samplingRate) {
+        initialize(smoothingTimeMs, samplingRate);
+    }
+
+    ~CParamSmooth() { }
+
+    void initialize(float smoothingTimeMs, double samplingRate) {
         a = exp(-TWO_PI / (smoothingTimeMs * 0.001f * samplingRate));
         b = 1.0f - a;
         z = 0.0f;
     }
-
-    ~CParamSmooth() { }
 
     inline float process(float in) {
         return z = (in * b) + (z * a);

@@ -111,11 +111,11 @@ protected:
 private:
     void allocateBuffer(double sampleRate);
 
-    float    fParams[paramCount];
-    AmpVal*  buffer = nullptr;
+    float fParams[paramCount];
+    AmpVal* buffer = nullptr;
     uint32_t buflen = 0, writepos = 0;
-    float    delaylen, drywetmix, feedback;
-    CParamSmooth *smooth_delay;
+    float delaylen, drywetmix, feedback;
+    CParamSmooth* smooth_delay;
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginSimpleDelay)
 };

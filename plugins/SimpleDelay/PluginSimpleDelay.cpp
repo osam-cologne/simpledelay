@@ -26,15 +26,20 @@ START_NAMESPACE_DISTRHO
 PluginSimpleDelay::PluginSimpleDelay()
     : Plugin(paramCount, 1, 0)  // paramCount params, 1 program(s), 0 states
 {
+    smooth_delay = new CParamSmooth(PARAM_SMOOTH_TIME, getSampleRate());
     loadProgram(0);
 }
 
 PluginSimpleDelay::~PluginSimpleDelay() {
-    if (buffer == nullptr) {
+    if (buffer != nullptr) {
         delete[] buffer;
         buffer = nullptr;
     }
-};
+    if (smooth_delay != nullptr) {
+        delete smooth_delay;
+        smooth_delay = nullptr;
+    }
+}
 
 
 // -----------------------------------------------------------------------
@@ -158,18 +163,14 @@ void PluginSimpleDelay::allocateBuffer(double sampleRate) {
 void PluginSimpleDelay::activate() {
     double fs = getSampleRate();
     // plugin is activated
-    smooth_delay = new CParamSmooth(PARAM_SMOOTH_TIME, fs);
     allocateBuffer(fs);
+    smooth_delay->initialize(PARAM_SMOOTH_TIME, fs);
 }
 
 void PluginSimpleDelay::deactivate() {
     if (buffer != nullptr) {
         delete[] buffer;
         buffer = nullptr;
-    }
-
-    if (buffer != nullptr) {
-        delete smooth_delay;
     }
 }
 

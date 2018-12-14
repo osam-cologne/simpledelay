@@ -145,7 +145,7 @@ void PluginSimpleDelay::loadProgram(uint32_t index) {
 }
 
 void PluginSimpleDelay::allocateBuffer(double sampleRate) {
-    buflen = (MAX_DELAY_TIME / 1000) * (uint32_t)sampleRate;
+    buflen = (uint32_t)((MAX_DELAY_TIME / 1000.0f * sampleRate) + 0.5f);
     buffer = new (std::nothrow) AmpVal [buflen];
 
     if (buffer == nullptr) {
